@@ -14,34 +14,39 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
-@RequestMapping("/task")
+@RequestMapping("/AI")
 @RequiredArgsConstructor
-public class TaskController {
+public class AICreatorController {
 
-    private final TaskService taskService;
+    private final AICreatorService aiCreatorService;
     private final MessageSource messageSource;
+
+    public AICreatorController(MessageSource messageSource) {
+        this.messageSource = messageSource;
+        aiCreatorService = null;
+    }
 
     @GetMapping
     public String index(Model model){
-        var tasks = taskService.getAllTasks();
-        model.addAttribute("tasks", tasks);
+        var tasks = aiCreatorService.getAllAICreators();
+        model.addAttribute("AICreators", aiCreatorService);
         return "index";
     }
 
     @GetMapping("/form")
     public String form(Model model) {
-        model.addAttribute("task", new Task());
+        model.addAttribute("AICreator", new AICreator());
         return "form";
     }
 
     @PostMapping("/form")
-    public String create(@Valid Task task, BindingResult result, RedirectAttributes redirect ){ //biding
+    public String create(@Valid AICreator aiCreator, BindingResult result, RedirectAttributes redirect ){ //biding
 
         if(result.hasErrors()) return "form";
 
-        var message = messageSource.getMessage("task.create.success", null, LocaleContextHolder.getLocale());
-        taskService.save(task);
+        var message = messageSource.getMessage("aiCreator.create.success", null, LocaleContextHolder.getLocale());
+        aiCreatorService.save(aiCreator);
         redirect.addFlashAttribute("message", message);
-        return "redirect:/task"; //301
+        return "redirect:/AI"; //301
     }
 }
